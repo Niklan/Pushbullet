@@ -34,10 +34,12 @@ class Pushbullet {
    * Send cURL request to API server.
    * @param $apiCall
    * @param $data
+   * @param string $method
+   * @param bool $auth
+   * @throws Exception
    * @return mixed
-   * @throws \Exception
    */
-  private function _request($apiCall, $data) {
+  private function _request($apiCall, $data, $method = 'POST', $auth = TRUE) {
     $url = self::API_URL . $apiCall;
 
     $curl = curl_init();
@@ -46,16 +48,25 @@ class Pushbullet {
     $curlOptions = array(
       CURLOPT_URL => $url,
       CURLOPT_HEADER => FALSE,
-      CURLOPT_POST => TRUE,
-      CURLOPT_USERPWD => $this->_accessKey,
-      CURLOPT_HTTPHEADER => array(
-        'Content-Type: application/json',
-      ),
       CURLOPT_RETURNTRANSFER => TRUE,
-      CURLOPT_POSTFIELDS => json_encode($data),
     );
 
     curl_setopt_array($curl, $curlOptions);
+
+    // If we need authorization.
+    if ($auth) {
+      curl_setopt($curl, CURLOPT_USERPWD, $this->_accessKey);
+    }
+
+    if ($method == 'POST') {
+      curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/json',
+      ));
+      curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
+    }
+
+    // Set method type.
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
 
     $response = curl_exec($curl);
 
@@ -159,6 +170,32 @@ class Pushbullet {
       'file_type' => $file_type,
       'file_url' => $file_url,
       'body' => $body,
+    ));
+  }
+
+  /**
+   * Get all pushes.
+   * @param int $modifiedAfter Request pushes modified after this timestamp.
+   * @return mixed
+   * @throws Exception
+   */
+  public function getPushes($modifiedAfter = 0) {
+    return $this->_request(self::API_PUSHES, array(
+      'modified_after' => $modifiedAfter
+    ), 'GET');
+  }
+
+  /**
+   * Mark the push as dismissed. All devices displaying this push should hide
+   * it from view.
+   *
+   * @param $iden
+   * @return mixed
+   * @throws \Exception
+   */
+  public function dismissPush($iden) {
+    return $this->_request(self::API_PUSHES . '/' . $iden, array(
+      'dismissed' => TRUE,
     ));
   }
 
