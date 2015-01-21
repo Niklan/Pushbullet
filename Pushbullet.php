@@ -39,7 +39,7 @@ class Pushbullet {
    * @throws Exception
    * @return mixed
    */
-  private function _request($apiCall, $data, $method = 'POST', $auth = TRUE) {
+  private function _request($apiCall, $data = array(), $method = 'POST', $auth = TRUE) {
     $url = self::API_URL . $apiCall;
 
     $curl = curl_init();
@@ -199,4 +199,23 @@ class Pushbullet {
     ));
   }
 
+  /**
+   * Change list values.
+   *
+   * @param $iden
+   * @param array $items  Update the items of a list push. The format should be
+   *                      the same as the items property of the push object,
+   *                      e.g. [{"checked": true, "text": "Item One"},
+   *                      {"checked": true, "text": "Item Two"}].
+   * @return mixed
+   * @throws \Exception
+   */
+  public function editPushItems($iden, $items) {
+    return $this->_request(self::API_PUSHES . '/' . $iden, $items);
+  }
+
+
+  public function deletePush($iden) {
+    return $this->_request(self::API_PUSHES . '/' . $iden, array(), 'DELETE');
+  }
 }
