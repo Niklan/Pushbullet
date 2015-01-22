@@ -2,20 +2,20 @@
 
 /**
  * @file
- * Pushbullet class.
+ * Pushbullet class. Can be used as standalone php class for Pushbullet.
  */
 class Pushbullet {
 
   private $_accessKey;
 
   // Store API url and API calls.
-  const API_URL = 'https://api.pushbullet.com';
-  const API_PUSHES = '/v2/pushes';
-  const API_DEVICES = '/v2/devices';
-  const API_CONTACTS = '/v2/contacts';
-  const API_SUBSCRIPTIONS = '/v2/subscriptions';
-  const API_USER = '/v2/users/me';
-  const API_UPLOAD = '/v2/upload-request';
+  const API_PUSHES = 'https://api.pushbullet.com/v2/pushes';
+  const API_DEVICES = 'https://api.pushbullet.com/v2/devices';
+  const API_CONTACTS = 'https://api.pushbullet.com/v2/contacts';
+  const API_SUBSCRIPTIONS = 'https://api.pushbullet.com/v2/subscriptions';
+  const API_CHANNEL_INFO = 'https://api.pushbullet.com/v2/channel-info';
+  const API_USER = 'https://api.pushbullet.com/v2/users/me';
+  const API_UPLOAD = 'https://api.pushbullet.com/v2/upload-request';
 
   /**
    * Initialization.
@@ -33,14 +33,19 @@ class Pushbullet {
   /**
    * Send cURL request to API server.
    * @param $apiCall
-   * @param $data
+   * @param array $data
    * @param string $method
+   * @param bool $sendJson
    * @param bool $auth
-   * @throws Exception
    * @return mixed
+   * @throws \Exception
    */
-  private function _request($apiCall, $data = array(), $method = 'POST', $auth = TRUE) {
-    $url = self::API_URL . $apiCall;
+  private function _request($apiCall, $data = array(), $method = 'POST', $sendJson = TRUE, $auth = TRUE) {
+    $url = $apiCall;
+
+    if ($method == 'GET' && $data !== null) {
+      $url .= '?' . http_build_query($data);
+    }
 
     $curl = curl_init();
 
@@ -59,10 +64,15 @@ class Pushbullet {
     }
 
     if ($method == 'POST') {
-      curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-        'Content-Type: application/json',
-      ));
-      curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
+      if ($sendJson) {
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+          'Content-Type: application/json',
+        ));
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
+      }
+      else {
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+      }
     }
 
     // Set method type.
@@ -86,7 +96,6 @@ class Pushbullet {
 
     // All fine.
     curl_close($curl);
-    print_r($response);
     return json_decode($response);
   }
 
@@ -214,8 +223,204 @@ class Pushbullet {
     return $this->_request(self::API_PUSHES . '/' . $iden, $items);
   }
 
-
+  /**
+   * Delete push.
+   *
+   * @param $iden
+   * @return mixed
+   * @throws \Exception
+   */
   public function deletePush($iden) {
     return $this->_request(self::API_PUSHES . '/' . $iden, array(), 'DELETE');
+  }
+
+  /**
+   * Get device list.
+   *
+   * @return mixed
+   * @throws \Exception
+   */
+  public function getDevices() {
+    return $this->_request(self::API_DEVICES, array(), 'GET');
+  }
+
+  /**
+   * Create new device.
+   *
+   * @param $name
+   * @param string $type
+   * @return mixed
+   * @throws \Exception
+   */
+  public function createDevice($name, $type = 'stream') {
+    return $this->_request(self::API_DEVICES, array(
+      'nickname' => $name,
+      'type' => $type,
+    ), 'POST', FALSE);
+  }
+
+  /**
+   * Delete device.
+   *
+   * @param $iden
+   * @return mixed
+   * @throws \Exception
+   */
+  public function deleteDevice($iden) {
+    return $this->_request(self::API_DEVICES . '/' . $iden , array(), 'DELETE');
+  }
+
+  /**
+   * Get contacts.
+   *
+   * @return mixed
+   * @throws \Exception
+   */
+  public function getContacts() {
+    return $this->_request(self::API_CONTACTS, array(), 'GET');
+  }
+
+  /**
+   * Create contact.
+   *
+   * @param $name
+   * @param $email
+   * @return mixed
+   * @throws \Exception
+   */
+  public function createContact($name, $email) {
+    return $this->_request(self::API_CONTACTS, array(
+      'name' => $name,
+      'email' => $email
+    ), 'POST', FALSE);
+  }
+
+
+  /**
+   * Update contact.
+   *
+   * @param $iden
+   * @param $name
+   * @return mixed
+   * @throws \Exception
+   */
+  public function updateContact($iden, $name) {
+    return $this->_request(self::API_CONTACTS . '/' . $iden, array(
+      'name' => $name,
+    ), 'POST', FALSE);
+  }
+
+  /**
+   * Delete contact.
+   *
+   * @param $iden
+   * @return mixed
+   * @throws \Exception
+   */
+  public function deleteContact($iden) {
+    return $this->_request(self::API_CONTACTS . '/' . $iden , array(), 'DELETE');
+  }
+
+  /**
+   * Get subscriptions.
+   *
+   * @return mixed
+   * @throws \Exception
+   */
+  public function getSubscriptions() {
+    return $this->_request(self::API_SUBSCRIPTIONS, array(), 'GET');
+  }
+
+  /**
+   * Subscribe to channel tag.
+   *
+   * @param $channelTag
+   * @return mixed
+   * @throws \Exception
+   */
+  public function subscribeToChannel($channelTag) {
+    return $this->_request(self::API_SUBSCRIPTIONS, array(
+      'channel_tag' => $channelTag,
+    ));
+  }
+
+  /**
+   * Unsubscribe from channel.
+   *
+   * @param $iden
+   * @return mixed
+   * @throws \Exception
+   */
+  public function unsubscribeFromChannel($iden) {
+    return $this->_request(self::API_SUBSCRIPTIONS. '/' . $iden , array(), 'DELETE');
+  }
+
+  /**
+   * Get channel information.
+   *
+   * @param $tag
+   * @return mixed
+   * @throws \Exception
+   */
+  public function getChannelInfo($tag) {
+    return $this->_request(self::API_CHANNEL_INFO, array(
+      'tag' => $tag,
+    ), 'GET');
+  }
+
+  /**
+   * Get user information.
+   *
+   * @return mixed
+   * @throws \Exception
+   */
+  public function getUserInfo() {
+    return $this->_request(self::API_USER, array(), 'GET');
+  }
+
+  /**
+   * Update user preferences.
+   * WARNING! Use it with caution.
+   *
+   * @param array $preferences The user's preferences (overwrites existing
+   *                           object).
+   * @return mixed
+   * @throws \Exception
+   */
+  public function updateUserPreferences($preferences) {
+    return $this->_request(self::API_USER, array(
+      'preferences' => $preferences,
+    ));
+  }
+
+  /**
+   * Upload file.
+   *
+   * @param string $filePath
+   * @param null $mimeType
+   * @return mixed
+   * @throws \Exception
+   */
+  public function uploadFile($filePath, $mimeType = NULL) {
+    $fullFilePath = realpath($filePath);
+
+    if (!is_readable($fullFilePath)) {
+      throw new Exception('File: Problems with file. Check your path to file and access.');
+    }
+
+    $data['file_name'] = basename($fullFilePath);
+
+    if ($mimeType === null) {
+      $data['file_type'] = mime_content_type($fullFilePath);
+    } else {
+      $data['file_type'] = $mimeType;
+    }
+
+    $requestAccess = $this->_request(self::API_UPLOAD, $data);
+    $requestAccess->data->file = '@' . $fullFilePath;
+
+    $this->_request($requestAccess->upload_url, $requestAccess->data, 'POST', FALSE, FALSE);
+
+    return $requestAccess->file_url;
   }
 }

@@ -49,4 +49,50 @@ $pushbullet->editPushItems('IDEN', array(
 
 // Delete a push.
 $pushbullet->deletePush('IDEN');
+
+// Get list of devices.
+$pushbullet->getDevices();
+
+// Create new device.
+$pushbullet->createDevice('name');
+
+// Delete device.
+$pushbullet->deleteDevice('IDEN');
+
+// Get contact list.
+$pushbullet->getContacts();
+
+// Create contact.
+$pushbullet->createContact('Name', 'email@address.com');
+
+// Update contact name.
+$pushbullet->updateContact('IDEN', 'New name');
+
+// Delete contact.
+$pushbullet->deleteContact('IDEN');
+
+// Get user subscriptions.
+$pushbullet->getSubscriptions();
+
+// Subscribe to channel.
+$pushbullet->subscribeToChannel('CHANNEL_TAG');
+
+// Usubscribe from channel.
+$pushbullet->unsubscribeFromChannel('IDEN');
+
+// Get channel information.
+$pushbullet->getChannelInfo('CHANNEL_TAG');
+
+// Get user info.
+$pushbullet->getUserInfo();
+
+// Update user preferences.
+// WARNING! Use it with caution. This function will override previous preferences.
+// Don't forget to save them before.
+$pushbullet->updateUserPreferences(array(
+  'smile' => '(^_^)',
+));
+
+// Upload file to pushbullet server.
+$pushbullet->uploadFile('README.md');
 ~~~
