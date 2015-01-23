@@ -1,0 +1,5 @@
+# Ignore JetBrains project files
+.idea/*
+
+# Ignore KDE hidden files.
+.directory

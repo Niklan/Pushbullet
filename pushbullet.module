@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Core module file.
+ */
+
+/**
+ * Load integration with Rules, if modules exist and enabled.
+ */
+if (module_exists('rules')) {
+  module_load_include('inc', 'pushbullet', 'includes/pushbullet.rules');
+}

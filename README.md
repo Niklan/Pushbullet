@@ -1,5 +1,7 @@
 # Pushbullet
-Pushbullet boilerplate for feature Drupal integration, maybe.
+Pushbullet API for Drupal.
+
+This module provide Pushbullet API via code, and integrated with Rules module.
 
 # Code examples
 ~~~php
