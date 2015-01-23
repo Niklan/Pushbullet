@@ -3,6 +3,8 @@ Pushbullet API for Drupal.
 
 This module provide Pushbullet API via code, and integrated with Rules module.
 
+![Push Rules example in Drupal 7](http://i.imgur.com/8oWReuQ.gif)
+
 # Code examples
 ~~~php
 // Initialize.
