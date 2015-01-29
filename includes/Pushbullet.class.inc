@@ -63,6 +63,22 @@ class Pushbullet {
       curl_setopt($curl, CURLOPT_USERPWD, $this->_accessKey);
     }
 
+    // Recipient for push. Can be email, channel tag or device iden.
+    if (!empty($data['recipient'])) {
+      if (filter_var($data['recipient'], FILTER_VALIDATE_EMAIL) !== false) {
+        $data['email'] = $data['recipient'];
+      } else {
+        if (substr($data['recipient'], 0, 1) == "#") {
+          $data['channel_tag'] = substr($data['recipient'], 1);
+        } else {
+          $data['device_iden'] = $data['recipient'];
+        }
+      }
+
+      // Clear this variable. We don't need to send this.
+      unset($data['recipient']);
+    }
+
     if ($method == 'POST') {
       if ($sendJson) {
         curl_setopt($curl, CURLOPT_HTTPHEADER, array(
@@ -105,11 +121,12 @@ class Pushbullet {
    * @param null $body
    * @return mixed
    */
-  public function pushNote($title = NULL, $body = NULL) {
+  public function pushNote($title = NULL, $body = NULL, $recipient = NULL) {
     return $this->_request(self::API_PUSHES, array(
       'type' => 'note',
       'title' => $title,
       'body' => $body,
+      'recipient' => $recipient,
     ));
   }
 
@@ -121,12 +138,13 @@ class Pushbullet {
    * @return mixed
    * @throws \Exception
    */
-  public function pushLink($title = NULL, $body = NULL, $url = NULL) {
+  public function pushLink($title = NULL, $body = NULL, $url = NULL, $recipient = NULL) {
     return $this->_request(self::API_PUSHES, array(
       'type' => 'link',
       'title' => $title,
       'body' => $body,
       'url' => $url,
+      'recipient' => $recipient,
     ));
   }
 
@@ -137,11 +155,12 @@ class Pushbullet {
    * @return mixed
    * @throws \Exception
    */
-  public function pushAddress($name = NULL, $address = NULL) {
+  public function pushAddress($name = NULL, $address = NULL, $recipient = NULL) {
     return $this->_request(self::API_PUSHES, array(
       'type' => 'address',
       'name' => $name,
       'address' => $address,
+      'recipient' => $recipient,
     ));
   }
 
@@ -151,13 +170,13 @@ class Pushbullet {
    * @param array $items
    * @return mixed
    * @throws \Exception
-   * @internal param null $body
    */
-  public function pushList($title = NULL, $items = array()) {
+  public function pushList($title = NULL, $items = array(), $recipient = NULL) {
     return $this->_request(self::API_PUSHES, array(
       'type' => 'list',
       'title' => $title,
       'items' => $items,
+      'recipient' => $recipient,
     ));
   }
 
@@ -172,13 +191,14 @@ class Pushbullet {
    * @return mixed
    * @throws \Exception
    */
-  public function pushFile($file_name = NULL, $file_type = NULL, $file_url = NULL, $body = NULL) {
+  public function pushFile($file_name = NULL, $file_type = NULL, $file_url = NULL, $body = NULL, $recipient = NULL) {
     return $this->_request(self::API_PUSHES, array(
       'type' => 'file',
       'file_name' => $file_name,
       'file_type' => $file_type,
       'file_url' => $file_url,
       'body' => $body,
+      'recipient' => $recipient,
     ));
   }
 

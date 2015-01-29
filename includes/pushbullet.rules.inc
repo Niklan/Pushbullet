@@ -30,6 +30,11 @@ function pushbullet_rules_action_info() {
           'optional' => TRUE,
           'label' => t('Push body'),
         ),
+        'push_recipient' => array(
+          'type' => 'text',
+          'label' => t('Recipient'),
+          'description' => t("Each push has a target, if you don't specify a target, pushbullet will broadcast it to all of the user's devices."),
+        ),
       ),
     ),
     // Push Link.
@@ -56,6 +61,11 @@ function pushbullet_rules_action_info() {
           'type' => 'text',
           'label' => t('Push URL'),
         ),
+        'push_recipient' => array(
+          'type' => 'text',
+          'label' => t('Recipient'),
+          'description' => t("Each push has a target, if you don't specify a target, pushbullet will broadcast it to all of the user's devices."),
+        ),
       ),
     ),
     // Push Address.
@@ -76,6 +86,11 @@ function pushbullet_rules_action_info() {
         'push_address' => array(
           'type' => 'text',
           'label' => t('Address'),
+        ),
+        'push_recipient' => array(
+          'type' => 'text',
+          'label' => t('Recipient'),
+          'description' => t("Each push has a target, if you don't specify a target, pushbullet will broadcast it to all of the user's devices."),
         ),
       ),
     ),
@@ -98,6 +113,11 @@ function pushbullet_rules_action_info() {
           'type' => 'text',
           'label' => t('Push items'),
           'description' => t('Each list item must start from new line.')
+        ),
+        'push_recipient' => array(
+          'type' => 'text',
+          'label' => t('Recipient'),
+          'description' => t("Each push has a target, if you don't specify a target, pushbullet will broadcast it to all of the user's devices."),
         ),
       ),
     ),
@@ -130,6 +150,11 @@ function pushbullet_rules_action_info() {
           'optional' => TRUE,
           'label' => t('Push body'),
         ),
+        'push_recipient' => array(
+          'type' => 'text',
+          'label' => t('Recipient'),
+          'description' => t("Each push has a target, if you don't specify a target, pushbullet will broadcast it to all of the user's devices."),
+        ),
       ),
     ),
   );
@@ -142,9 +167,9 @@ function pushbullet_rules_action_info() {
  * @param $title
  * @param $body
  */
-function pushbullet_rules_push_note($access_token, $title = '', $body = '') {
+function pushbullet_rules_push_note($access_token, $title = '', $body = '', $recipient = NULL) {
   $push = new Pushbullet($access_token);
-  $push->pushNote($title, $body);
+  $push->pushNote($title, $body, $recipient);
 }
 
 /**
@@ -155,9 +180,9 @@ function pushbullet_rules_push_note($access_token, $title = '', $body = '') {
  * @param string $body
  * @param $url
  */
-function pushbullet_rules_push_link($access_token, $title = '', $body = '', $url) {
+function pushbullet_rules_push_link($access_token, $title = '', $body = '', $url, $recipient = NULL) {
   $push = new Pushbullet($access_token);
-  $push->pushLink($title, $body, $url);
+  $push->pushLink($title, $body, $url, $recipient);
 }
 
 /**
@@ -167,9 +192,9 @@ function pushbullet_rules_push_link($access_token, $title = '', $body = '', $url
  * @param string $name
  * @param $address
  */
-function pushbullet_rules_push_address($access_token, $name = '', $address) {
+function pushbullet_rules_push_address($access_token, $name = '', $address, $recipient = NULL) {
   $push = new Pushbullet($access_token);
-  $push->pushAddress($name, $address);
+  $push->pushAddress($name, $address, $recipient);
 }
 
 /**
@@ -179,10 +204,10 @@ function pushbullet_rules_push_address($access_token, $name = '', $address) {
  * @param string $title
  * @param $list
  */
-function pushbullet_rules_push_list($access_token, $title = '', $list) {
+function pushbullet_rules_push_list($access_token, $title = '', $list, $recipient = NULL) {
   $prepared_list = explode(PHP_EOL, $list);
   $push = new Pushbullet($access_token);
-  $push->pushList($title, $prepared_list);
+  $push->pushList($title, $prepared_list, $recipient);
 }
 
 /**
@@ -194,7 +219,7 @@ function pushbullet_rules_push_list($access_token, $title = '', $list) {
  * @param $file_url
  * @param string $body
  */
-function pushbullet_rules_push_file($access_token, $file_type, $file_name = '', $file_url, $body = '') {
+function pushbullet_rules_push_file($access_token, $file_type, $file_name = '', $file_url, $body = '', $recipient = NULL) {
   if (!$file_type) {
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -209,5 +234,5 @@ function pushbullet_rules_push_file($access_token, $file_type, $file_name = '', 
   }
 
   $push = new Pushbullet($access_token);
-  $push->pushFile($file_name, $file_type, $file_url, $body);
+  $push->pushFile($file_name, $file_type, $file_url, $body, $recipient);
 }
