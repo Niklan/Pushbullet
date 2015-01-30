@@ -33,6 +33,7 @@ function pushbullet_rules_action_info() {
         'push_recipient' => array(
           'type' => 'text',
           'label' => t('Recipient'),
+          'optional' => TRUE,
           'description' => t("Each push has a target, if you don't specify a target, pushbullet will broadcast it to all of the user's devices."),
         ),
       ),
@@ -64,6 +65,7 @@ function pushbullet_rules_action_info() {
         'push_recipient' => array(
           'type' => 'text',
           'label' => t('Recipient'),
+          'optional' => TRUE,
           'description' => t("Each push has a target, if you don't specify a target, pushbullet will broadcast it to all of the user's devices."),
         ),
       ),
@@ -90,6 +92,7 @@ function pushbullet_rules_action_info() {
         'push_recipient' => array(
           'type' => 'text',
           'label' => t('Recipient'),
+          'optional' => TRUE,
           'description' => t("Each push has a target, if you don't specify a target, pushbullet will broadcast it to all of the user's devices."),
         ),
       ),
@@ -117,6 +120,7 @@ function pushbullet_rules_action_info() {
         'push_recipient' => array(
           'type' => 'text',
           'label' => t('Recipient'),
+          'optional' => TRUE,
           'description' => t("Each push has a target, if you don't specify a target, pushbullet will broadcast it to all of the user's devices."),
         ),
       ),
@@ -153,6 +157,7 @@ function pushbullet_rules_action_info() {
         'push_recipient' => array(
           'type' => 'text',
           'label' => t('Recipient'),
+          'optional' => TRUE,
           'description' => t("Each push has a target, if you don't specify a target, pushbullet will broadcast it to all of the user's devices."),
         ),
       ),
