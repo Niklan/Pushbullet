@@ -8,6 +8,6 @@
 /**
  * Load integration with Rules, if modules exist and enabled.
  */
-if (module_exists('rules')) {
-  module_load_include('inc', 'pushbullet', 'includes/pushbullet.rules');
+function pushbullet_rules_file_info() {
+  return array('includes/pushbullet.rules');
 }
