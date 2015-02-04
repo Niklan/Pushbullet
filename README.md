@@ -99,4 +99,19 @@ $pushbullet->updateUserPreferences(array(
 
 // Upload file to pushbullet server.
 $pushbullet->uploadFile('README.md');
+
+// Each push type can have recipient in last parameter.
+// Parameter can be:
+// device_iden - Send the push to a specific device. Appears as 
+//               target_device_iden on the push. You can find this using the 
+//               getDevices() call.
+// email - Send the push to this email address. If that email address is 
+//         associated with a Pushbullet user, we will send it directly to that
+//         user, otherwise we will fallback to sending an email to the email 
+//         address (this will also happen if a user exists but has no devices 
+//         registered).
+// channel_tag - Send the push to all subscribers to your channel that has 
+//               this tag.
+// In this case IDEN used on init will be use as sender.
+$pushbullet->pushNote('Title', 'Body.', 'example@example.com');
 ~~~

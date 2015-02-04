@@ -119,7 +119,9 @@ class Pushbullet {
    * Push Note.
    * @param null $title
    * @param null $body
+   * @param null $recipient
    * @return mixed
+   * @throws \Exception
    */
   public function pushNote($title = NULL, $body = NULL, $recipient = NULL) {
     return $this->_request(self::API_PUSHES, array(
@@ -135,6 +137,7 @@ class Pushbullet {
    * @param null $title
    * @param null $body
    * @param null $url
+   * @param null $recipient
    * @return mixed
    * @throws \Exception
    */
@@ -152,6 +155,7 @@ class Pushbullet {
    * Push Address.
    * @param null $name
    * @param null $address
+   * @param null $recipient
    * @return mixed
    * @throws \Exception
    */
@@ -168,6 +172,7 @@ class Pushbullet {
    * Push Checklist.
    * @param null $title
    * @param array $items
+   * @param null $recipient
    * @return mixed
    * @throws \Exception
    */
@@ -188,6 +193,7 @@ class Pushbullet {
    * - You can find MIME type list here: https://en.wikipedia.org/wiki/Internet_media_type
    * @param null $file_url
    * @param null $body
+   * @param null $recipient
    * @return mixed
    * @throws \Exception
    */

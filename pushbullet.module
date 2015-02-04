@@ -6,6 +6,7 @@
  */
 
 /**
+ * Implements hook_rules_file_info().
  * Load integration with Rules, if modules exist and enabled.
  */
 function pushbullet_rules_file_info() {
