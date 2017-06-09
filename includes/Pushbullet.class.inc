@@ -64,6 +64,9 @@ class Pushbullet {
     if ($auth) {
       curl_setopt($curl, CURLOPT_USERPWD, $this->_accessKey);
     }
+	
+	//Allow to send from self-signed HTTPS websites
+	curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, $this->_verifySSL);
 
     // Recipient for push. Can be email, channel tag or device iden.
     if (!empty($data['recipient'])) {
@@ -95,11 +98,6 @@ class Pushbullet {
 
     // Set method type.
     curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
-	
-	//Allow to send from autosigned HTTPS websites
-	if(!$this->_verifySSL){
-		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-	}
 
     $response = curl_exec($curl);
 
