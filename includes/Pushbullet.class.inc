@@ -7,6 +7,7 @@
 class Pushbullet {
 
   private $_accessKey;
+  private $_verifySSL;
 
   // Store API url and API calls.
   const API_PUSHES = 'https://api.pushbullet.com/v2/pushes';
@@ -22,12 +23,13 @@ class Pushbullet {
    * @param $accessKey
    * @throws \Exception
    */
-  public function __construct($accessKey) {
+  public function __construct($accessKey, $verifySSL=true) {
     if (!function_exists('curl_init')) {
       throw new Exception('cURL library is not loaded.');
     }
 
     $this->_accessKey = $accessKey;
+	$this->_verifySSL = $verifySSL;
   }
 
   /**
@@ -62,6 +64,9 @@ class Pushbullet {
     if ($auth) {
       curl_setopt($curl, CURLOPT_USERPWD, $this->_accessKey);
     }
+	
+	//Allow to send from self-signed HTTPS websites
+	curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, $this->_verifySSL);
 
     // Recipient for push. Can be email, channel tag or device iden.
     if (!empty($data['recipient'])) {
